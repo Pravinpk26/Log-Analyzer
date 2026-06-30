@@ -3,6 +3,7 @@ import "./App.css";
 
 import { scanWebsite, uploadLog, getEvents } from "./services/api";
 
+import RecommendationPanel from "./components/RecommendationPanel";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import ScanProgressModal from "./components/ScanProgressModel";

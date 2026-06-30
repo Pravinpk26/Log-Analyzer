@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from services.ai_insights import generate_ai_insights
 from services.interaction_engine import interact_with_website
 from services.signal_collector import collect_signals
 from services.Log_categorizer import categorize_logs
@@ -56,6 +57,44 @@ def home():
 def dashboard():
 
     return get_dashboard_summary()
+
+
+@app.get("/ai-insights")
+def ai_insights(url: str):
+    raw_data             = interact_with_website(url)
+    signals              = collect_signals(raw_data)
+    authentication_event = create_authentication_event(signals)
+    add_event(authentication_event)
+    add_login_event(authentication_event)
+    categorized_logs     = categorize_logs(signals)
+    security_score       = calculate_security_score(signals)
+
+    statistics = {
+        "total_logins":      get_total_logins(),
+        "successful_logins": get_successful_logins(),
+        "failed_logins":     get_failed_logins(),
+        "unique_ips":        get_unique_ips(),
+    }
+
+    risk      = calculate_risk_score(signals, statistics)
+    anomalies = detect_anomalies(statistics, authentication_event)
+
+    ai_result = generate_ai_insights(
+        signals=signals,
+        anomalies=anomalies,
+        risk=risk,
+        statistics=statistics,
+    )
+
+    return {
+        "security_score":       security_score,
+        "risk":                 risk,
+        "anomalies":            anomalies,
+        "ai_insights":          ai_result,
+        "results":              categorized_logs,
+        "authentication_event": authentication_event,
+        "statistics":           statistics,
+    }
 
 
 @app.get("/scan")
