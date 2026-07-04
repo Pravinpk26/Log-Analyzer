@@ -1,34 +1,22 @@
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
+/**
+ * SparklineChart.jsx
+ * Renders a small sparkline using real data points.
+ * Accepts a `data` prop (array of numbers) from TopCards.
+ * Falls back to flat line if no data provided.
+ */
 
-export default function SparklineChart({
-  color,
-}) {
+import { ResponsiveContainer, LineChart, Line } from "recharts";
 
-  const data = [
-    { value: 20 },
-    { value: 24 },
-    { value: 18 },
-    { value: 27 },
-    { value: 22 },
-    { value: 31 },
-    { value: 28 },
-    { value: 34 },
-    { value: 29 },
-    { value: 36 },
-  ];
+export default function SparklineChart({ color, data }) {
+  // Convert array of numbers to recharts format
+  const chartData = (data && data.length > 0)
+    ? data.map((v) => ({ value: v }))
+    : [{ value: 0 }, { value: 0 }, { value: 0 }];
 
   return (
-
     <div className="w-28 h-16">
-
       <ResponsiveContainer>
-
-        <LineChart data={data}>
-
+        <LineChart data={chartData}>
           <Line
             type="monotone"
             dataKey="value"
@@ -37,13 +25,8 @@ export default function SparklineChart({
             dot={false}
             isAnimationActive={true}
           />
-
         </LineChart>
-
       </ResponsiveContainer>
-
     </div>
-
   );
-
 }
